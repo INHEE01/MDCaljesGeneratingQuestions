@@ -8,21 +8,25 @@ with open('../scripts/english_yangcheon2_chapter1.txt', 'r', encoding='utf-8') a
 # 2. Split the text into sentences
 sentences = re.split(r'(?<=[.!?]) +', text.strip())
 
-# 3. Process each sentence to add a new line and create blank problems
+# 3. Process each sentence to create blank problems and store the answers
 def create_blank_problem(sentence):
     words = sentence.split()
     num_blanks = len(words) // 2
     indices = random.sample(range(len(words)), num_blanks)
+    answer = sentence
     for index in indices:
         words[index] = '_' * len(words[index])
-    return ' '.join(words)
+    problem = ' '.join(words)
+    return problem, answer
 
-blank_sentences = []
-for sentence in sentences:
-    blank_sentences.append(sentence.strip())
-    blank_sentences.append(create_blank_problem(sentence.strip()))
+problems_and_answers = [create_blank_problem(sentence.strip()) for sentence in sentences]
 
-# 4. Write the processed sentences to question_chapter1.txt with UTF-8 encoding
+# 4. Write the blank problems and answers to question_chapter1.txt with UTF-8 encoding
 with open('../questions/question_chapter1.txt', 'w', encoding='utf-8') as file:
-    for blank_sentence in blank_sentences:
-        file.write(blank_sentence + '\n\n')
+    file.write("Questions:\n")
+    for problem, _ in problems_and_answers:
+        file.write(problem + '\n\n')
+    
+    file.write("\nAnswers:\n")
+    for _, answer in problems_and_answers:
+        file.write(answer + '\n\n')
